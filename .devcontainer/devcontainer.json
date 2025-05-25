@@ -24,7 +24,8 @@
 			"extensions": [
 				"streetsidesoftware.code-spell-checker",
 				"tamasfe.even-better-toml",
-				"rust-lang.rust-analyzer"
+				"rust-lang.rust-analyzer",
+				"ms-azuretools.vscode-containers"
 			]
 		}
 	}
