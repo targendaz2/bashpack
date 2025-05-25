@@ -1,0 +1,12 @@
+{
+  "[json][jsonc]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "docker.languageserver.formatter.ignoreMultilineInstructions": true,
+  "editor.tabSize": 4,
+  "editor.formatOnSave": true
+}
