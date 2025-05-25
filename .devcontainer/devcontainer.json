@@ -1,0 +1,31 @@
+{
+	"name": "Bashpack Dev Container",
+	"build": {
+		"dockerfile": "./Dockerfile",
+		"context": ".."
+	},
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+	"mounts": [
+		{
+			"source": "devcontainer-cargo-cache-${devcontainerId}",
+			"target": "/usr/local/cargo",
+			"type": "volume"
+		},
+		{
+			"source": "devcontainer-zshhistory-${devcontainerId}",
+			"target": "/users/vscode/.zsh_history",
+			"type": "volume"
+		}
+	],
+	"remoteUser": "vscode",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+				"tamasfe.even-better-toml",
+				"rust-lang.rust-analyzer"
+			]
+		}
+	}
+}
