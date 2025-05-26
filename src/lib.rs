@@ -6,16 +6,21 @@ use std::{
     path::Path,
 };
 
-pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
-    // Check if the input file exists, bail if not
-    if !input_file.exists() {
-        bail!("Input file does not exist");
+/// Opens a file at the given path and returns a buffered reader.
+fn open_file(path: &Path) -> Result<BufReader<File>> {
+    if !path.exists() {
+        bail!("File does not exist: {path:?}");
     }
 
-    // Attempt to open and read the input file, fail if we can't
-    let file = File::open(input_file)
-        .with_context(|| format!("Failed to open input file: {input_file:?}"))?;
+    let file = File::open(path).with_context(|| format!("Failed to open input file: {path:?}"))?;
     let reader = BufReader::new(file);
+
+    Ok(reader)
+}
+
+pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
+    // Attempt to open and read the input file, fail if we can't
+    let reader = open_file(input_file)?;
 
     // Get the absolute path of the input file's parent directory
     let input_file_parent_path = input_file
@@ -47,14 +52,7 @@ pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
         // Check if the source file exists, bail if not
         let sourced_file_path =
             Path::new(&input_file_parent_path.to_str().unwrap()).join(&result["filename"]);
-        if !sourced_file_path.exists() {
-            bail!("Source file {sourced_file_path:?} on line {index} does not exist");
-        }
-
-        // Attempt to read the sourced file, fail if we can't
-        let sourced_file = File::open(&sourced_file_path)
-            .with_context(|| format!("Failed to open sourced file: {sourced_file_path:?}"))?;
-        let sourced_reader = BufReader::new(sourced_file);
+        let sourced_reader = open_file(&sourced_file_path)?;
 
         // Write the sourced file content to the output content
         for sourced_line in sourced_reader.lines() {
@@ -82,22 +80,25 @@ pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn doesnt_throw_if_input_file_exists() {
-        let input_file = Path::new("Cargo.toml");
-        let output_file = Path::new("output.sh");
-        let result = run(input_file, output_file);
-        assert!(result.is_ok(), "Expected no error when input file exists");
-    }
+    #[cfg(test)]
+    mod open_file {
+        use super::*;
 
-    #[test]
-    fn throws_if_input_file_doesnt_exist() {
-        let input_file = Path::new("non_existent_file.sh");
-        let output_file = Path::new("output.sh");
-        let result = run(input_file, output_file);
-        assert!(
-            result.is_err(),
-            "Expected an error when input file does not exist"
-        );
+        use tempfile::NamedTempFile;
+
+        #[test]
+        fn returns_a_reader_if_file_exists() {
+            let mut tmpfile = NamedTempFile::new().unwrap();
+            write!(tmpfile, "echo 'test'").unwrap();
+            let reader = open_file(tmpfile.path()).unwrap();
+            assert!(reader.lines().next().is_some());
+        }
+
+        #[test]
+        fn returns_an_error_if_file_doesnt_exist() {
+            let non_existent_path = Path::new("non_existent_file.txt");
+            let result = open_file(non_existent_path);
+            assert!(result.is_err());
+        }
     }
 }

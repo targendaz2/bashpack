@@ -17,3 +17,4 @@ regex = "1.11"
 [dev-dependencies]
 assert_cmd = "2.0"
 assert_fs = "1.1"
+tempfile = "3.20"

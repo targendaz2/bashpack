@@ -107,6 +107,7 @@ dependencies = [
  "assert_fs",
  "clap",
  "regex",
+ "tempfile",
 ]
 
 [[package]]
