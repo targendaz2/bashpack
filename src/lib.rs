@@ -26,11 +26,18 @@ pub fn run(input_file: &Path, _output_file: &Path) -> Result<()> {
         let line = line
             .with_context(|| format!("Failed to read line {index} from file: {:?}", input_file))?;
 
+        // Parse the line, skip it if it's not a source line
         let Some(result) = re.captures(&line) else {
             continue;
         };
 
         println!("Found source \"{}\" on line {index}", &result["filename"]);
+
+        // Check if the source file exists
+        let sourced_file = Path::new(&result["filename"]);
+        if !sourced_file.exists() {
+            bail!("Source file {sourced_file:?} on line {index} does not exist");
+        }
     }
 
     Ok(())
