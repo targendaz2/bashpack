@@ -106,7 +106,6 @@ dependencies = [
  "assert_cmd",
  "assert_fs",
  "clap",
- "log",
  "regex",
 ]
 
