@@ -12,9 +12,11 @@
     "softwareTerms"
   ],
   "words": [
-    "Bashpack"
+    "bashpack",
   ],
-  "ignoreWords": [],
+  "ignoreWords": [
+    "zshhistory"
+  ],
   "import": [],
   "ignoreRegExpList": [
     "^\\s*.*(fn |_)doesnt(_|\\().*$"

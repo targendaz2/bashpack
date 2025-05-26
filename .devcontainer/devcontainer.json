@@ -18,17 +18,19 @@
 			"type": "volume"
 		}
 	],
-	"remoteUser": "vscode",
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"streetsidesoftware.code-spell-checker",
-				"tamasfe.even-better-toml",
-				"rust-lang.rust-analyzer",
-				"ms-azuretools.vscode-containers",
 				"bierner.markdown-checkbox",
-				"DavidAnson.vscode-markdownlint"
+				"DavidAnson.vscode-markdownlint",
+				"eamodio.gitlens",
+				"mads-hartmann.bash-ide-vscode",
+				"ms-azuretools.vscode-containers",
+				"rust-lang.rust-analyzer",
+				"streetsidesoftware.code-spell-checker",
+				"tamasfe.even-better-toml"
 			]
 		}
-	}
+	},
+	"remoteUser": "vscode"
 }

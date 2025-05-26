@@ -2,8 +2,8 @@
   "recommendations": [
     "bierner.markdown-checkbox",
     "davidanson.vscode-markdownlint",
+    "mads-hartmann.bash-ide-vscode",
     "ms-azuretools.vscode-containers",
-    "rust-lang.rust-analyzer",
     "streetsidesoftware.code-spell-checker",
     "tamasfe.even-better-toml"
   ]
