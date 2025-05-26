@@ -1,4 +1,5 @@
 use anyhow::{Context, Result, bail};
+use regex::Regex;
 use std::{
     fs::File,
     io::{BufRead, BufReader},
@@ -17,14 +18,19 @@ pub fn run(input_file: &Path, _output_file: &Path) -> Result<()> {
     let reader = BufReader::new(file);
 
     // Read the file line by line looking for source lines
+    let re = Regex::new(r"^source\s(?<filename>(\.?\/)?\w+(\.\w+)?)$")
+        .with_context(|| "Failed to compile regex")?;
+
     for (index, line) in reader.lines().enumerate() {
         let index = index + 1;
         let line = line
             .with_context(|| format!("Failed to read line {index} from file: {:?}", input_file))?;
 
-        if line.trim_start().starts_with("source") {
-            println!("Line {index} is a source line")
-        }
+        let Some(result) = re.captures(&line) else {
+            continue;
+        };
+
+        println!("Found source \"{}\" on line {index}", &result["filename"]);
     }
 
     Ok(())
