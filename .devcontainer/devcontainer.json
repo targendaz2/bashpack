@@ -25,7 +25,9 @@
 				"streetsidesoftware.code-spell-checker",
 				"tamasfe.even-better-toml",
 				"rust-lang.rust-analyzer",
-				"ms-azuretools.vscode-containers"
+				"ms-azuretools.vscode-containers",
+				"bierner.markdown-checkbox",
+				"DavidAnson.vscode-markdownlint"
 			]
 		}
 	}

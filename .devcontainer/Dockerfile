@@ -8,7 +8,7 @@ RUN /bin/sh -c set -eux; \
     DEBIAN_FRONTEND=noninteractive apt-get upgrade -y; \
     rm -rf /var/lib/apt/lists/*
 
-# Install rustup
+# Install rustfmt
 RUN rustup component add rustfmt
 
 # Create local user
