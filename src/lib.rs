@@ -2,12 +2,9 @@ mod fs;
 
 use anyhow::{Context, Result};
 use regex::Regex;
-use std::{
-    io::{BufRead, Read},
-    path::Path,
-};
+use std::{io::BufRead, path::Path};
 
-use crate::fs::{get_parent_path, read_file, write_file};
+use crate::fs::{get_parent_path, read_file, read_file_to_string, write_file};
 
 /// Processes a single line of the input file, looking for a source directive and replacing it with the content of the sourced file.
 fn process_line(line: &str, working_directory: &Path, re: &Regex) -> Result<String> {
@@ -16,9 +13,7 @@ fn process_line(line: &str, working_directory: &Path, re: &Regex) -> Result<Stri
     };
 
     let sourced_file_path = working_directory.join(&result["filename"]);
-    let mut file = read_file(&sourced_file_path)?;
-    let mut output_content = String::new();
-    file.read_to_string(&mut output_content).context(format!(
+    let output_content = read_file_to_string(&sourced_file_path).context(format!(
         "Failed to read sourced file: {sourced_file_path:?}"
     ))?;
     Ok(output_content)
