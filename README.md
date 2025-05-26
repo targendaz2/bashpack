@@ -1,6 +1,6 @@
 # Bashpack
 
-A bundler for Bash. Think webpack or Rollup for Bash.
+A bundler for Bash scripts. Think webpack or Rollup for Bash.
 
 ## Features
 

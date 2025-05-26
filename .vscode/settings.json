@@ -11,5 +11,8 @@
   },
   "docker.languageserver.formatter.ignoreMultilineInstructions": true,
   "editor.tabSize": 4,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "LICENSE-*": "plaintext"
+  }
 }

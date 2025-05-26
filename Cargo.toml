@@ -1,6 +1,12 @@
 [package]
 name = "bashpack"
 version = "0.1.0"
+authors = ["David Rosenberg <david@dgrdev.com>"]
+license = "MIT OR Apache-2.0"
+description = "A bundler for Bash scripts."
+readme = "README.md"
+keywords = ["bash", "bundle", "bundler"]
+categories = ["command-line-utilities"]
 edition = "2024"
 
 [dependencies]
