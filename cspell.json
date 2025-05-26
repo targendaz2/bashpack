@@ -1,15 +1,22 @@
 {
-    "version": "0.2",
-    "ignorePaths": [
-        "target/**/*",
-        "cspell.json"
-    ],
-    "dictionaryDefinitions": [],
-    "dictionaries": [],
-    "words": [],
-    "ignoreWords": [],
-    "import": [],
-    "ignoreRegExpList": [
-        "^\\s*.*(fn |_)doesnt(_|\\().*$"
-    ]
+  "version": "0.2",
+  "ignorePaths": [
+    "target/**/*",
+    "cspell.json"
+  ],
+  "dictionaryDefinitions": [],
+  "dictionaries": [
+    "bash",
+    "en_US",
+    "misc",
+    "softwareTerms"
+  ],
+  "words": [
+    "Bashpack"
+  ],
+  "ignoreWords": [],
+  "import": [],
+  "ignoreRegExpList": [
+    "^\\s*.*(fn |_)doesnt(_|\\().*$"
+  ]
 }
