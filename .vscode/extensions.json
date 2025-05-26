@@ -2,6 +2,8 @@
   "recommendations": [
     "rust-lang.rust-analyzer",
     "tamasfe.even-better-toml",
-    "ms-azuretools.vscode-containers"
+    "ms-azuretools.vscode-containers",
+    "bierner.markdown-checkbox",
+    "davidanson.vscode-markdownlint"
   ]
 }
