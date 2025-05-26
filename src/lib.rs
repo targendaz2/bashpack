@@ -24,19 +24,23 @@ fn get_parent_path(path: &Path) -> Result<PathBuf> {
     Ok(path.to_path_buf())
 }
 
-pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
-    // Attempt to open and read the input file, fail if we can't
-    let reader = open_file(input_file)?;
+fn write_to_file(path: &Path, content: &str) -> Result<()> {
+    let path = path.to_path_buf();
+    let path_handle =
+        File::create(&path).context(format!("Failed to create output file: {path:?}"))?;
 
-    // Get the absolute path of the input file's parent directory
-    let input_file_parent_path = get_parent_path(input_file)?;
+    let mut writer = BufWriter::new(path_handle);
+    writer
+        .write_all(content.as_bytes())
+        .context(format!("Failed to write to output file: {path:?}"))?;
 
-    // Initialize the output file content
+    Ok(())
+}
+
+/// Processes the lines of the input file, looking for source lines and replacing them with their content.
+fn process_lines<R: BufRead>(reader: R, input_file: &Path, re: &Regex) -> Result<String> {
     let mut output_content = String::new();
-
-    // Read the file line by line looking for source lines
-    let re = Regex::new(r#"^\s*source\s+("|')?(?<filename>.+)("|')?\s*$"#)
-        .context("Failed to compile regex")?;
+    let input_file_parent_path = get_parent_path(input_file)?;
 
     for (index, line) in reader.lines().enumerate() {
         let index = index + 1;
@@ -68,17 +72,21 @@ pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
         }
     }
 
+    Ok(output_content)
+}
+
+pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
+    // Attempt to open and read the input file, fail if we can't
+    let reader = open_file(input_file)?;
+
+    // Read the file line by line looking for source lines
+    let re = Regex::new(r#"^\s*source\s+("|')?(?<filename>.+)("|')?\s*$"#)
+        .context("Failed to compile regex")?;
+
+    let output_content = process_lines(reader, input_file, &re)?;
+
     // Write the output content to the output file
-    let output_file_path = output_file.to_path_buf();
-    let output_file_handle = File::create(&output_file_path).context(format!(
-        "Failed to create output file: {output_file_path:?}"
-    ))?;
-    let mut output_writer = BufWriter::new(output_file_handle);
-    output_writer
-        .write_all(output_content.as_bytes())
-        .context(format!(
-            "Failed to write to output file: {output_file_path:?}"
-        ))?;
+    write_to_file(output_file, &output_content)?;
 
     Ok(())
 }
