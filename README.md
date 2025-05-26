@@ -8,3 +8,4 @@ A bundler for Bash scripts. Think webpack or Rollup for Bash.
 - [ ] recursive source file bundling
 - [ ] circular reference handling
 - [ ] config file support
+- [ ] use Bash AST for bundling
