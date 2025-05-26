@@ -3,7 +3,7 @@ use regex::Regex;
 use std::{
     fs::File,
     io::{BufRead, BufReader, BufWriter, Write},
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 /// Opens a file at the given path and returns a buffered reader.
@@ -12,10 +12,16 @@ fn open_file(path: &Path) -> Result<BufReader<File>> {
         bail!("File does not exist: {path:?}");
     }
 
-    let file = File::open(path).with_context(|| format!("Failed to open input file: {path:?}"))?;
-    let reader = BufReader::new(file);
+    let file = File::open(path).context(format!("Failed to open input file: {path:?}"))?;
 
+    let reader = BufReader::new(file);
     Ok(reader)
+}
+
+/// Gets the parent directory of the given path.
+fn get_parent_path(path: &Path) -> Result<PathBuf> {
+    let path = path.parent().context("File has no parent directory")?;
+    Ok(path.to_path_buf())
 }
 
 pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
@@ -23,22 +29,20 @@ pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
     let reader = open_file(input_file)?;
 
     // Get the absolute path of the input file's parent directory
-    let input_file_parent_path = input_file
-        .parent()
-        .context("Input file has no parent directory")?
-        .to_path_buf();
+    let input_file_parent_path = get_parent_path(input_file)?;
 
     // Initialize the output file content
     let mut output_content = String::new();
 
     // Read the file line by line looking for source lines
     let re = Regex::new(r#"^\s*source\s+("|')?(?<filename>.+)("|')?\s*$"#)
-        .with_context(|| "Failed to compile regex")?;
+        .context("Failed to compile regex")?;
 
     for (index, line) in reader.lines().enumerate() {
         let index = index + 1;
-        let line =
-            line.with_context(|| format!("Failed to read line {index} from file: {input_file:?}"))?;
+        let line = line.context(format!(
+            "Failed to read line {index} from file: {input_file:?}"
+        ))?;
 
         // Parse the line, keep it as is if it's not a source line
         let Some(result) = re.captures(&line) else {
@@ -66,12 +70,15 @@ pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
 
     // Write the output content to the output file
     let output_file_path = output_file.to_path_buf();
-    let output_file_handle = File::create(&output_file_path)
-        .with_context(|| format!("Failed to create output file: {output_file_path:?}"))?;
+    let output_file_handle = File::create(&output_file_path).context(format!(
+        "Failed to create output file: {output_file_path:?}"
+    ))?;
     let mut output_writer = BufWriter::new(output_file_handle);
     output_writer
         .write_all(output_content.as_bytes())
-        .with_context(|| format!("Failed to write to output file: {output_file_path:?}"))?;
+        .context(format!(
+            "Failed to write to output file: {output_file_path:?}"
+        ))?;
 
     Ok(())
 }
