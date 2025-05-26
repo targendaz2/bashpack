@@ -2,11 +2,11 @@ use anyhow::{Context, Result, bail};
 use regex::Regex;
 use std::{
     fs::File,
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, BufWriter, Write},
     path::Path,
 };
 
-pub fn run(input_file: &Path, _output_file: &Path) -> Result<()> {
+pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
     // Check if the input file exists, bail if not
     if !input_file.exists() {
         bail!("Input file does not exist");
@@ -66,7 +66,14 @@ pub fn run(input_file: &Path, _output_file: &Path) -> Result<()> {
         }
     }
 
-    println!("{output_content}");
+    // Write the output content to the output file
+    let output_file_path = output_file.to_path_buf();
+    let output_file_handle = File::create(&output_file_path)
+        .with_context(|| format!("Failed to create output file: {output_file_path:?}"))?;
+    let mut output_writer = BufWriter::new(output_file_handle);
+    output_writer
+        .write_all(output_content.as_bytes())
+        .with_context(|| format!("Failed to write to output file: {output_file_path:?}"))?;
 
     Ok(())
 }
