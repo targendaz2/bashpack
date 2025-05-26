@@ -4,10 +4,12 @@ version = "0.1.0"
 authors = ["David Rosenberg <david@dgrdev.com>"]
 license = "MIT OR Apache-2.0"
 description = "A bundler for Bash scripts."
+repository = "https://github.com/targendaz2/bashpack"
 readme = "README.md"
 keywords = ["bash", "bundle", "bundler"]
 categories = ["command-line-utilities"]
 edition = "2024"
+publish = false
 
 [dependencies]
 anyhow = "1.0"
