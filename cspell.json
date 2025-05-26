@@ -1,0 +1,15 @@
+{
+    "version": "0.2",
+    "ignorePaths": [
+        "target/**/*",
+        "cspell.json"
+    ],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [],
+    "ignoreWords": [],
+    "import": [],
+    "ignoreRegExpList": [
+        "^\\s*.*(fn |_)doesnt(_|\\().*$"
+    ]
+}
