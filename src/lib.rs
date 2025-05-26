@@ -7,7 +7,7 @@ use std::{
 };
 
 /// Opens a file at the given path and returns a buffered reader.
-fn open_file(path: &Path) -> Result<BufReader<File>> {
+fn read_file(path: &Path) -> Result<BufReader<File>> {
     if !path.exists() {
         bail!("File does not exist: {path:?}");
     }
@@ -24,7 +24,8 @@ fn get_parent_path(path: &Path) -> Result<PathBuf> {
     Ok(path.to_path_buf())
 }
 
-fn write_to_file(path: &Path, content: &str) -> Result<()> {
+/// Writes the given content to a file at the specified path.
+fn write_file(path: &Path, content: &str) -> Result<()> {
     let path = path.to_path_buf();
     let path_handle =
         File::create(&path).context(format!("Failed to create output file: {path:?}"))?;
@@ -60,7 +61,7 @@ fn process_lines<R: BufRead>(reader: R, input_file: &Path, re: &Regex) -> Result
         // Check if the source file exists, bail if not
         let sourced_file_path =
             Path::new(&input_file_parent_path.to_str().unwrap()).join(&result["filename"]);
-        let sourced_reader = open_file(&sourced_file_path)?;
+        let sourced_reader = read_file(&sourced_file_path)?;
 
         // Write the sourced file content to the output content
         for sourced_line in sourced_reader.lines() {
@@ -77,7 +78,7 @@ fn process_lines<R: BufRead>(reader: R, input_file: &Path, re: &Regex) -> Result
 
 pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
     // Attempt to open and read the input file, fail if we can't
-    let reader = open_file(input_file)?;
+    let reader = read_file(input_file)?;
 
     // Read the file line by line looking for source lines
     let re = Regex::new(r#"^\s*source\s+("|')?(?<filename>.+)("|')?\s*$"#)
@@ -86,7 +87,7 @@ pub fn run(input_file: &Path, output_file: &Path) -> Result<()> {
     let output_content = process_lines(reader, input_file, &re)?;
 
     // Write the output content to the output file
-    write_to_file(output_file, &output_content)?;
+    write_file(output_file, &output_content)?;
 
     Ok(())
 }
@@ -105,14 +106,14 @@ mod tests {
         fn returns_a_reader_if_file_exists() {
             let mut tmpfile = NamedTempFile::new().unwrap();
             write!(tmpfile, "echo 'test'").unwrap();
-            let reader = open_file(tmpfile.path()).unwrap();
+            let reader = read_file(tmpfile.path()).unwrap();
             assert!(reader.lines().next().is_some());
         }
 
         #[test]
         fn returns_an_error_if_file_doesnt_exist() {
             let non_existent_path = Path::new("non_existent_file.txt");
-            let result = open_file(non_existent_path);
+            let result = read_file(non_existent_path);
             assert!(result.is_err());
         }
     }
