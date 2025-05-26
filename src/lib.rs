@@ -18,7 +18,7 @@ pub fn run(input_file: &Path, _output_file: &Path) -> Result<()> {
     let reader = BufReader::new(file);
 
     // Read the file line by line looking for source lines
-    let re = Regex::new(r#"^source\s("|')?(?<filename>(\.?\/)?\w+(\.\w+)?)("|')?$"#)
+    let re = Regex::new(r#"^source\s("|')?(?<filename>(\.{0,2}\/)?\w+(\.\w+)?)("|')?$"#)
         .with_context(|| "Failed to compile regex")?;
 
     for (index, line) in reader.lines().enumerate() {
