@@ -4,7 +4,7 @@ A bundler for Bash scripts. Think webpack or Rollup for Bash.
 
 ## Features
 
-- [ ] single-level source file bundling
+- [x] single-level source file bundling
 - [ ] recursive source file bundling
 - [ ] circular reference handling
 - [ ] config file support
