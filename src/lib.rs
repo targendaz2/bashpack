@@ -14,8 +14,17 @@ pub fn run(input_file: &Path, _output_file: &Path) -> Result<()> {
 
     // Attempt to open and read the input file, fail if we can't
     let file = File::open(input_file)
-        .with_context(|| format!("Failed to open input file: {:?}", input_file))?;
+        .with_context(|| format!("Failed to open input file: {input_file:?}"))?;
     let reader = BufReader::new(file);
+
+    // Get the absolute path of the input file's parent directory
+    let input_file_parent_path = input_file
+        .parent()
+        .context("Input file has no parent directory")?
+        .to_path_buf();
+
+    // Initialize the output file content
+    let mut output_content = String::new();
 
     // Read the file line by line looking for source lines
     let re = Regex::new(r#"^\s*source\s+("|')?(?<filename>.+)("|')?\s*$"#)
@@ -23,22 +32,41 @@ pub fn run(input_file: &Path, _output_file: &Path) -> Result<()> {
 
     for (index, line) in reader.lines().enumerate() {
         let index = index + 1;
-        let line = line
-            .with_context(|| format!("Failed to read line {index} from file: {:?}", input_file))?;
+        let line =
+            line.with_context(|| format!("Failed to read line {index} from file: {input_file:?}"))?;
 
-        // Parse the line, skip it if it's not a source line
+        // Parse the line, keep it as is if it's not a source line
         let Some(result) = re.captures(&line) else {
+            output_content.push_str(&line);
+            output_content.push('\n');
             continue;
         };
 
         println!("Found source \"{}\" on line {index}", &result["filename"]);
 
-        // Check if the source file exists
-        let sourced_file = Path::new(&result["filename"]);
-        if !sourced_file.exists() {
-            bail!("Source file {sourced_file:?} on line {index} does not exist");
+        // Check if the source file exists, bail if not
+        let sourced_file_path =
+            Path::new(&input_file_parent_path.to_str().unwrap()).join(&result["filename"]);
+        if !sourced_file_path.exists() {
+            bail!("Source file {sourced_file_path:?} on line {index} does not exist");
+        }
+
+        // Attempt to read the sourced file, fail if we can't
+        let sourced_file = File::open(&sourced_file_path)
+            .with_context(|| format!("Failed to open sourced file: {sourced_file_path:?}"))?;
+        let sourced_reader = BufReader::new(sourced_file);
+
+        // Write the sourced file content to the output content
+        for sourced_line in sourced_reader.lines() {
+            let sourced_line = sourced_line.with_context(|| {
+                format!("Failed to read line from sourced file: {sourced_file_path:?}")
+            })?;
+            output_content.push_str(&sourced_line);
+            output_content.push('\n');
         }
     }
+
+    println!("{output_content}");
 
     Ok(())
 }
