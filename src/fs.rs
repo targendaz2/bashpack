@@ -1,7 +1,7 @@
 use anyhow::{Context, Result, bail};
 use std::{
-    fs::File,
-    io::{BufReader, BufWriter, Read, Write},
+    fs::{self, File},
+    io::{BufReader, BufWriter, Write},
     path::{Path, PathBuf},
 };
 
@@ -19,12 +19,11 @@ pub fn read_file(path: &Path) -> Result<BufReader<File>> {
 
 /// Reads the content of a file at the given path into a string.
 pub fn read_file_to_string(path: &Path) -> Result<String> {
-    let mut reader = read_file(path)?;
-    let mut content = String::new();
-    reader
-        .read_to_string(&mut content)
-        .context(format!("Failed to read file to string: {path:?}"))?;
-    Ok(content)
+    if !path.exists() {
+        bail!("File does not exist: {path:?}");
+    }
+
+    fs::read_to_string(path).context(format!("Failed to read input file: {path:?}"))
 }
 
 /// Gets the parent directory of the given path.
