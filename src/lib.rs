@@ -2,9 +2,27 @@ mod fs;
 
 use anyhow::{Context, Result};
 use regex::Regex;
-use std::{io::BufRead, path::Path};
+use std::{
+    io::{BufRead, Read},
+    path::Path,
+};
 
 use crate::fs::{get_parent_path, read_file, write_file};
+
+/// Processes a single line of the input file, looking for a source directive and replacing it with the content of the sourced file.
+fn process_line(line: &str, working_directory: &Path, re: &Regex) -> Result<String> {
+    let Some(result) = re.captures(line) else {
+        return Ok(format!("{line}\n"));
+    };
+
+    let sourced_file_path = working_directory.join(&result["filename"]);
+    let mut file = read_file(&sourced_file_path)?;
+    let mut output_content = String::new();
+    file.read_to_string(&mut output_content).context(format!(
+        "Failed to read sourced file: {sourced_file_path:?}"
+    ))?;
+    Ok(output_content)
+}
 
 /// Processes the lines of the input file, looking for source lines and replacing them with their content.
 fn process_lines<R: BufRead>(reader: R, input_file: &Path, re: &Regex) -> Result<String> {
@@ -17,28 +35,10 @@ fn process_lines<R: BufRead>(reader: R, input_file: &Path, re: &Regex) -> Result
             "Failed to read line {index} from file: {input_file:?}"
         ))?;
 
-        // Parse the line, keep it as is if it's not a source line
-        let Some(result) = re.captures(&line) else {
-            output_content.push_str(&line);
-            output_content.push('\n');
-            continue;
-        };
-
-        println!("Found source \"{}\" on line {index}", &result["filename"]);
-
-        // Check if the source file exists, bail if not
-        let sourced_file_path =
-            Path::new(&input_file_parent_path.to_str().unwrap()).join(&result["filename"]);
-        let sourced_reader = read_file(&sourced_file_path)?;
-
-        // Write the sourced file content to the output content
-        for sourced_line in sourced_reader.lines() {
-            let sourced_line = sourced_line.with_context(|| {
-                format!("Failed to read line from sourced file: {sourced_file_path:?}")
-            })?;
-            output_content.push_str(&sourced_line);
-            output_content.push('\n');
-        }
+        let processed_line = process_line(&line, &input_file_parent_path, re).context(format!(
+            "Failed to process line {index} from file: {input_file:?}"
+        ))?;
+        output_content.push_str(&processed_line);
     }
 
     Ok(output_content)
