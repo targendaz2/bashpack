@@ -1,9 +1,7 @@
 use anyhow::{Context, Result};
-use std::{
-    fs,
-    io::{self, Write},
-    path::Path,
-};
+use std::fs;
+use std::io::{self, Write};
+use std::path::Path;
 
 /// Reads the entrypoint Bash file and writes it to output or stdout.
 pub fn bundle_script(entrypoint: &Path, output: Option<&Path>) -> Result<()> {
