@@ -1,22 +1,11 @@
-use anyhow::{Context, Result};
-use std::path::PathBuf;
+mod bundler;
+mod cli;
+mod resolver;
 
-use clap::Parser;
-
-use bashpack::run;
-
-#[derive(Parser)]
-struct Cli {
-    /// Input script to process
-    input_file: PathBuf,
-
-    /// Output file to write the processed script
-    output_file: PathBuf,
-}
+use anyhow::Result;
 
 fn main() -> Result<()> {
-    let args = Cli::parse();
-    run(&args.input_file, &args.output_file).with_context(|| "Failed to run bashpack")?;
-
+    let args = cli::parse_args();
+    bundler::bundle_script(&args.entrypoint, args.output.as_deref())?;
     Ok(())
 }
