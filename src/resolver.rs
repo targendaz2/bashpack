@@ -1,8 +1,10 @@
 use anyhow::{Context, Result};
 use regex::Regex;
-use std::collections::HashSet;
-use std::fs;
-use std::path::{Path, PathBuf};
+use std::{
+    collections::HashSet,
+    fs,
+    path::{Path, PathBuf},
+};
 
 /// Resolves and bundles a Bash script recursively by inlining `source` and `.` directives
 pub fn resolve_script(entrypoint: &Path) -> Result<String> {
