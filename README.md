@@ -5,7 +5,7 @@ A bundler for Bash scripts. Think webpack or Rollup for Bash.
 ## Features
 
 - [x] single-level source file bundling
-- [ ] recursive source file bundling
+- [x] recursive source file bundling
 - [ ] circular reference handling
 - [ ] config file support
 - [ ] use Bash AST for bundling
@@ -21,7 +21,7 @@ Resolved as is.
 
 ### Relative Static Paths
 
-Resolved relative to the current working directory.
+Resolved relative to the script.
 
 ### Dynamic Paths
 
