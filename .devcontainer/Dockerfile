@@ -4,7 +4,7 @@ FROM rust:1-slim
 RUN /bin/sh -c set -eux; \
     apt-get update; \
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
-        ca-certificates curl git gnupg2 locales locales-all wget zsh; \
+        ca-certificates curl git gnupg2 locales locales-all man-db wget zsh; \
     DEBIAN_FRONTEND=noninteractive apt-get upgrade -y; \
     rm -rf /var/lib/apt/lists/*
 
