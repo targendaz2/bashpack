@@ -18,6 +18,10 @@ pub struct Cli {
     #[arg(long)]
     pub no_inline: bool,
 
+    /// Dry run mode, do not write output files
+    #[arg(long)]
+    pub dry_run: bool,
+
     /// Enable verbose output
     #[arg(short, long)]
     pub verbose: bool,

@@ -1,6 +1,11 @@
-use crate::{cli::Cli, resolver::resolve_script};
+use crate::{
+    cli::Cli,
+    resolver::{resolve_script, resolve_script_recursive},
+};
 use anyhow::{Context, Result};
+use regex::Regex;
 use std::{
+    collections::HashSet,
     fs,
     io::{self, Write},
 };
@@ -56,6 +61,21 @@ pub fn bundle_script(args: &Cli) -> Result<()> {
                 .write_all(bundled.as_bytes())
                 .context("Failed to write to stdout")?;
         }
+    }
+
+    Ok(())
+}
+
+pub fn dry_run(args: &Cli) -> Result<()> {
+    let re = Regex::new(r#"^\s*(source|\.)\s+([^\s]+)"#).unwrap();
+    let mut visited = HashSet::new();
+
+    // We're not interested in the bundled script here
+    let _ = resolve_script_recursive(&args.entrypoint, &re, &mut visited)?;
+
+    println!("Dry run: would inline the following files:");
+    for path in &visited {
+        println!("{}", path.display());
     }
 
     Ok(())

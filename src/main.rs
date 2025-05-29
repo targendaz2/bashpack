@@ -6,6 +6,10 @@ use anyhow::Result;
 
 fn main() -> Result<()> {
     let args = cli::parse_args();
-    bundler::bundle_script(&args)?;
+    if args.dry_run {
+        bundler::dry_run(&args)?;
+    } else {
+        bundler::bundle_script(&args)?;
+    }
     Ok(())
 }

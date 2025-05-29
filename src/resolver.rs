@@ -13,7 +13,7 @@ pub fn resolve_script(entrypoint: &Path) -> Result<String> {
     resolve_script_recursive(entrypoint, &re, &mut visited)
 }
 
-fn resolve_script_recursive(
+pub fn resolve_script_recursive(
     path: &Path,
     re: &Regex,
     visited: &mut HashSet<PathBuf>,
