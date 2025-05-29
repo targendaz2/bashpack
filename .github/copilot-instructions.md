@@ -57,12 +57,13 @@ bashpack <ENTRYPOINT> [OPTIONS]
 
 ### OPTIONS
 
-| Flag          | Description                                             |
-| ------------- | ------------------------------------------------------- |
-| -o, --output  | Path to output file. Defaults to stdout.                |
-| --minify      | Strip comments and blank lines (preserves shebang).     |
-| --no-inline   | Output only the entrypoint as-is (no source resolving). |
-| -v, --verbose | Print sourced files and other debug info.               |
+| Flag          | Description                                               |
+| ------------- | --------------------------------------------------------- |
+| -o, --output  | Path to output file. Defaults to stdout.                  |
+| --minify      | Strip comments and blank lines (preserves shebang).       |
+| --no-inline   | Output only the entrypoint as-is (no source resolving).   |
+| --dry-run     | Print the list of scripts that would be inlined and exit. |
+| -v, --verbose | Print sourced files and other debug info.                 |
 
 ## Project Structure
 
@@ -86,16 +87,21 @@ src/
 
 ### Functional Improvements
 
-- Handle `source` using variables (e.g. `source "$SCRIPT_DIR/foo.sh"`)
-- Handle `source` in if/case/functions conditionally
-- Add support for config file
-- Add `--dry-run` to show what would be bundled
-- Add `--watch` to auto-bundle on changes (e.g. via `notify`)
-- Preserve file boundaries with inline `# ----- filename -----` comments
-- Add `--strip-sourced-comments` (keep entrypoint comments only)
+[ ] Handle `source` using variables (e.g. `source "$SCRIPT_DIR/foo.sh"`)
+[ ] Handle `source` in if/case/functions conditionally
+[ ] Add support for config file
+[x] Add `--dry-run` to show what would be bundled
+[ ] Add `--watch` to auto-bundle on changes (e.g. via `notify`)
+[ ] Preserve file boundaries with inline `# ----- filename -----` comments
+[ ] Add `--strip-sourced-comments` (keep entrypoint comments only)
 
 ### Packaging
 
 - Publish to crates.io
 - Homebrew formula or install script
 - GitHub release with binary builds
+
+## Developer Notes
+
+- `--dry-run` is implemented using `resolve_script_recursive()` directly with a custom `visited` set.
+- The `bundler::dry_run()` function handles dry-run logic separately from `bundle_script()`.
